@@ -1,8 +1,9 @@
 package br.com.alura.screenmatch;
 
-import br.com.alura.screenmatch.model.DadosSerie;
-import br.com.alura.screenmatch.service.ConsumoApi;
-import br.com.alura.screenmatch.service.ConverteDados;
+import br.com.alura.screenmatch.principal.Principal;
+import br.com.alura.screenmatch.repository.SerieRepository;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,18 +11,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ScreenmatchApplication implements CommandLineRunner {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ScreenmatchApplication.class, args);
-	}
+    @Autowired
+    private SerieRepository repositorio;
 
-	@Override
-	public void run(String... args) throws Exception {
-		var consumoApi = new ConsumoApi();
-		var json = consumoApi.obterDados("http://www.omdbapi.com/?apikey=af30817c&t=gilmore+girls");
-		System.out.println(json);
+    public static void main(String[] args) {
+        Dotenv dotenv = Dotenv.load();
 
-		ConverteDados conversor = new ConverteDados();
-		DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
-		System.out.println(dados);
-	}
+        dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(),entry.getValue()));
+        SpringApplication.run(ScreenmatchApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        Principal principal = new Principal(repositorio);
+        principal.exibeMenu();
+
+    }
 }
