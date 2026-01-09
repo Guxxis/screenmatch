@@ -6,11 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class ConsultaChatGPT {
 
-    @Value("${api.openai.key}")
-    private static String apiKey;
-
     public static String obterTraducao(String texto) {
-        OpenAiService service = new OpenAiService(apiKey);
+        OpenAiService service = new OpenAiService(System.getProperty("OPENAI_APIKEY"));
 
         CompletionRequest requisicao = CompletionRequest.builder()
                 .model("gpt-3.5-turbo-instruct")
